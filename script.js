@@ -91,7 +91,32 @@ async function createPuppy(puppy) {
   return json.data;
 }
 
-const addNewPuppy = async (playerObj) => {
+const form = document.getElementById("new-player-form");
+form.addEventListener("submit", async (puppy) => {
+  puppy.preventDefault();
+
+  const name = document.getElementById("name");
+  const breed = document.getElementById("breed");
+  const status = document.getElementById("status");
+  const image = document.getElementById("image");
+
+  const puppyArray = {
+    name: name.value,
+    breed: breed.value,
+    status: status.value,
+    image: image.value,
+  };
+
+  try {
+    const newPuppy = await createPuppy(puppyArray);
+    // add the new puppy to the screen
+    addNewPuppy(newPuppy);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+const addNewPuppy = async (puppy) => {
   try {
     const puppiesElement = document.getElementById("events");
     const elem = document.createElement("div");
@@ -124,49 +149,6 @@ const addNewPuppy = async (playerObj) => {
   }
 };
 
-const form = document.getElementById("new-player-form");
-form.addEventListener("submit", async (puppy) => {
-  puppy.preventDefault();
-
-  const name = document.getElementById("name");
-  const breed = document.getElementById("breed");
-  const status = document.getElementById("status");
-  const image = document.getElementById("image");
-
-  const puppyArray = {
-    name: name.value,
-    breed: breed.value,
-    status: status.value,
-    image: image.value,
-  };
-
-  try {
-    const newPuppy = await createPuppy(puppyArray);
-    // add the new recipe to the screen
-    addNewPuppy(newPuppy);
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-const removePuppy = async (playerId) => {
-  try {
-    const response = await fetch(`${baseURL}/${id}`, {
-      method: "delete",
-    });
-
-    if (response.status === 204) {
-      return true;
-    }
-    render();
-  } catch (error) {
-    console.error(
-      `Whoops, trouble removing player #${playerId} from the roster!`,
-      err
-    );
-  }
-};
-
 /**
  * It takes an array of player objects, loops through them, and creates a string of HTML for each
  * player, then adds that string to a larger string of HTML that represents all the players.
@@ -190,11 +172,33 @@ const removePuppy = async (playerId) => {
 const renderAllPlayers = (playerList) => {
   try {
     const grid = document.querySelector(".content_grid");
+
     playerList.forEach((player) => {
       const card = createCard(player);
-
       const footerElement = card.lastChild;
-      footerElement.lastChild.addEventListener("click", async (event) => {
+      const detailsBtn = footerElement.lastChild;
+      const deleteBtn = detailsBtn.previousSibling;
+      let id = "";
+
+      deleteBtn.addEventListener("click", async (event) => {
+        const selectedCard = event.target.closest(".card");
+        id = selectedCard.dataset.id;
+        try {
+          const response = await fetch(`${baseURL}/${id}`, {
+            method: "delete",
+          });
+
+          if (response.status === 204) {
+            return true;
+          }
+          render();
+        } catch (error) {
+          console.log(error);
+          // update state / change message
+        }
+      });
+
+      detailsBtn.addEventListener("click", async (event) => {
         const selectedCard = event.target.closest(".card");
         const id = selectedCard.dataset.id;
         const result = await fetchSinglePlayer(id);

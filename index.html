@@ -18,7 +18,16 @@
 <body>
 
   <!-- form to add new players -->
-  <div id="new-player-form"></div>
+  <div id="new-player-form">
+    <form id="new-player-form">
+      <input type="text" id="name" placeholder="Name" />
+      <input type="text" id="breed" placeholder="Breed" />
+      <input type="text" id="status" placeholder="Status" />
+      <input type="text" id="image" placeholder="Image" />
+      <input id="newPlayerBtn" type="submit" value="Create Player" />
+    </form>
+    <div id="events"></div>
+  </div>
 
   <!-- container for all players -->
   <div id="all-players-container">

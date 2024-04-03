@@ -8,6 +8,8 @@ export function createCard(puppy) {
   //create card body
   const cardBodyBreed = document.createElement("div");
   const cardBodyStatus = document.createElement("div");
+  cardBodyBreed.className = "seeDetails";
+  cardBodyStatus.className = "seeDetails";
   //create card footer
   const cardFooter = createCardFooter();
 
